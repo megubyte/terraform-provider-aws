@@ -3578,6 +3578,19 @@ data "aws_rds_orderable_db_instance" "test" {
 `, engine, version, license)
 }
 
+func testAccInstanceConfig_orderableClass_SQLServerSe(version string) string {
+	return fmt.Sprintf(`
+data "aws_rds_orderable_db_instance" "test" {
+  engine         = "sqlserver-se"
+  engine_version = %q
+  license_model  = "license-included"
+  storage_type   = "standard"
+
+  preferred_instance_classes = ["db.m5.large", "db.m4.large", "db.r4.large"]
+}
+`, version)
+}
+
 func testAccInstanceConfig_orderableClassMySQL() string {
 	return testAccInstanceConfig_orderableClass("mysql", "5.6.35", "general-public-license")
 }
@@ -3588,10 +3601,6 @@ func testAccInstanceConfig_orderableClassMariadb(version string) string {
 
 func testAccInstanceConfig_orderableClassSQLServerEx(version string) string {
 	return testAccInstanceConfig_orderableClass("sqlserver-ex", version, "license-included")
-}
-
-func testAccInstanceConfig_orderableClassSQLServerSe(version string) string {
-	return testAccInstanceConfig_orderableClass("sqlserver-se", version, "license-included")
 }
 
 func testAccInstanceBasicConfig() string {
@@ -5496,16 +5505,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_EnabledCloudWatchLogsExports_MSSQL(rName string) string {
-	return fmt.Sprintf(`
-data "aws_rds_orderable_db_instance" "test" {
-  engine         = "sqlserver-se"
-  engine_version = "14.00.1000.169.v1"
-  license_model  = "license-included"
-  storage_type   = "standard"
-
-  preferred_instance_classes = ["db.m5.large", "db.m4.large", "db.r4.large"]
-}
-
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClass_SQLServerSe(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "test" {
   allocated_storage               = 20
   enabled_cloudwatch_logs_exports = ["agent", "error"]
@@ -5517,7 +5519,7 @@ resource "aws_db_instance" "test" {
   username                        = "tfacctest"
   skip_final_snapshot             = true
 }
-`, rName)
+`, rName))
 }
 
 func testAccInstanceConfig_EnabledCloudWatchLogsExports_Postgresql(rName string) string {
@@ -6561,16 +6563,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_Io1Storage(rName string, iops int) string {
-	return fmt.Sprintf(`
-data "aws_rds_orderable_db_instance" "test" {
-  engine         = "mariadb"
-  engine_version = "10.2.15"
-  license_model  = "general-public-license"
-  storage_type   = "io1"
-
-  preferred_instance_classes = ["db.t3.micro", "db.t2.micro", "db.t2.medium"]
-}
-
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 200
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6595,7 +6590,7 @@ resource "aws_db_instance" "test" {
   iops                = %[2]d
   storage_type        = data.aws_rds_orderable_db_instance.test.storage_type
 }
-`, rName, iops)
+`, rName, iops))
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_AllowMajorVersionUpgrade(rName string, allowMajorVersionUpgrade bool) string {
@@ -7218,7 +7213,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_MultiAZ_SQLServer(rName string, multiAz bool) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassSQLServerSe(""),
+		testAccInstanceConfig_orderableClass_SQLServerSe(""),
 		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 20
