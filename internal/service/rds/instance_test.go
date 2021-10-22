@@ -3582,12 +3582,16 @@ func testAccInstanceConfig_orderableClassMySQL() string {
 	return testAccInstanceConfig_orderableClass("mysql", "5.6.35", "general-public-license")
 }
 
-func testAccInstanceConfig_orderableClassMariadb() string {
-	return testAccInstanceConfig_orderableClass("mariadb", "10.2.15", "general-public-license")
+func testAccInstanceConfig_orderableClassMariadb(version string) string {
+	return testAccInstanceConfig_orderableClass("mariadb", version, "general-public-license")
 }
 
-func testAccInstanceConfig_orderableClassSQLServerEx() string {
-	return testAccInstanceConfig_orderableClass("sqlserver-ex", "14.00.1000.169.v1", "license-included")
+func testAccInstanceConfig_orderableClassSQLServerEx(version string) string {
+	return testAccInstanceConfig_orderableClass("sqlserver-ex", version, "license-included")
+}
+
+func testAccInstanceConfig_orderableClassSQLServerSe(version string) string {
+	return testAccInstanceConfig_orderableClass("sqlserver-se", version, "license-included")
 }
 
 func testAccInstanceBasicConfig() string {
@@ -4450,7 +4454,7 @@ resource "aws_db_instance" "bar" {
 
 func testAccInstanceConfig_MSSQL_timezone(rInt int) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassSQLServerEx(),
+		testAccInstanceConfig_orderableClassSQLServerEx(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		fmt.Sprintf(`
 resource "aws_vpc" "foo" {
@@ -4524,7 +4528,7 @@ resource "aws_security_group_rule" "rds-mssql-1" {
 
 func testAccInstanceConfig_MSSQL_timezone_AKST(rInt int) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassSQLServerEx(),
+		testAccInstanceConfig_orderableClassSQLServerEx(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		fmt.Sprintf(`
 resource "aws_vpc" "foo" {
@@ -4650,7 +4654,7 @@ resource "aws_db_subnet_group" "test" {
 
 func testAccInstanceConfig_MSSQLDomain_SharedConfig(rName, domain string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassSQLServerEx(),
+		testAccInstanceConfig_orderableClassSQLServerEx(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		testAccInstanceConfig_VPCConfigBase(rName),
 		testAccInstanceConfig_ServiceRole(rName),
@@ -5208,7 +5212,9 @@ resource "aws_db_instance" "bar" {
 }
 
 func testAccInstanceConfig_MariaDB(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "test" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6467,7 +6473,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6493,7 +6501,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifierRemoved(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6522,7 +6532,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_AllocatedStorage(rName string, allocatedStorage int) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6635,7 +6647,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_AutoMinorVersionUpgrade(rName string, autoMinorVersionUpgrade bool) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6663,7 +6677,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_AvailabilityZone(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
@@ -6692,7 +6706,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_BackupRetentionPeriod(rName string, backupRetentionPeriod int) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6719,7 +6735,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_BackupRetentionPeriod_Unset(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage       = 5
   backup_retention_period = 1
@@ -6749,7 +6767,9 @@ resource "aws_db_instance" "test" {
 // We provide maintenance_window to prevent the following error from a randomly selected window:
 // InvalidParameterValue: The backup window and maintenance window must not overlap.
 func testAccInstanceConfig_SnapshotIdentifier_BackupWindow(rName, backupWindow, maintenanceWindow string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -6778,7 +6798,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_DBSubnetGroupName(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		fmt.Sprintf(`
 resource "aws_vpc" "test" {
@@ -6833,7 +6853,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_DBSubnetGroupName_RAMShared(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		acctest.ConfigAlternateAccountProvider(),
 		fmt.Sprintf(`
 data "aws_availability_zones" "alternate" {
@@ -6935,7 +6955,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_DBSubnetGroupName_VPCSecurityGroupIDs(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		acctest.ConfigAvailableAZsNoOptIn(),
 		fmt.Sprintf(`
 resource "aws_vpc" "test" {
@@ -7051,7 +7071,9 @@ resource "aws_db_instance" "test" {
 // We provide backup_window to prevent the following error from a randomly selected window:
 // InvalidParameterValue: The backup window and maintenance window must not overlap.
 func testAccInstanceConfig_SnapshotIdentifier_MaintenanceWindow(rName, backupWindow, maintenanceWindow string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -7079,7 +7101,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_MaxAllocatedStorage(rName string, maxAllocatedStorage int) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -7107,7 +7131,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_Monitoring(rName string, monitoringInterval int) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 data "aws_partition" "current" {}
 
 resource "aws_iam_role" "test" {
@@ -7162,7 +7188,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_MultiAZ(rName string, multiAz bool) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -7189,16 +7217,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_MultiAZ_SQLServer(rName string, multiAz bool) string {
-	return fmt.Sprintf(`
-data "aws_rds_orderable_db_instance" "test" {
-  engine         = "sqlserver-se"
-  engine_version = "14.00.1000.169.v1"
-  license_model  = "license-included"
-  storage_type   = "standard"
-
-  preferred_instance_classes = ["db.m5.large", "db.m4.large", "db.r4.large"]
-}
-
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassSQLServerSe(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 20
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -7224,12 +7245,12 @@ resource "aws_db_instance" "test" {
   snapshot_identifier     = aws_db_snapshot.test.id
   skip_final_snapshot     = true
 }
-`, rName, multiAz)
+`, rName, multiAz))
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_ParameterGroupName(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		fmt.Sprintf(`
 resource "aws_db_parameter_group" "test" {
   family = "mariadb10.2"
@@ -7269,7 +7290,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_Port(rName string, port int) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
@@ -7298,7 +7319,7 @@ resource "aws_db_instance" "test" {
 
 func testAccInstanceConfig_SnapshotIdentifier_Tags(rName string) string {
 	return acctest.ConfigCompose(
-		testAccInstanceConfig_orderableClassMariadb(),
+		testAccInstanceConfig_orderableClassMariadb(""),
 		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
@@ -7329,7 +7350,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_Tags_Unset(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "source" {
   allocated_storage   = 5
   engine              = data.aws_rds_orderable_db_instance.test.engine
@@ -7361,7 +7384,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_VPCSecurityGroupIDs(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 data "aws_vpc" "default" {
   default = true
 }
@@ -7397,7 +7422,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_SnapshotIdentifier_VPCSecurityGroupIds_Tags(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 data "aws_vpc" "default" {
   default = true
 }
@@ -7727,7 +7754,9 @@ resource "aws_db_instance" "test" {
 }
 
 func testAccInstanceConfig_NoDeleteAutomatedBackups(rName string) string {
-	return acctest.ConfigCompose(testAccInstanceConfig_orderableClassMariadb(), fmt.Sprintf(`
+	return acctest.ConfigCompose(
+		testAccInstanceConfig_orderableClassMariadb(""),
+		fmt.Sprintf(`
 resource "aws_db_instance" "test" {
   allocated_storage   = 10
   engine              = data.aws_rds_orderable_db_instance.test.engine
