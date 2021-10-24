@@ -1,190 +1,72 @@
 package rds
 
 import (
-	"fmt"
 	"regexp"
 
-	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func validEventSubscriptionName(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[0-9A-Za-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only alphanumeric characters and hyphens allowed in %q", k))
-	}
-	if len(value) > 255 {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be longer than 255 characters", k))
-	}
-	return
-}
+var validEventSubscriptionName = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[0-9A-Za-z-]+$`), "must only contain alphanumeric characters and hyphens"),
+	validation.StringLenBetween(1, 255),
+)
 
-func validOptionGroupName(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of %q must be a letter", k))
-	}
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters and hyphens allowed in %q", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot contain two consecutive hyphens", k))
-	}
-	if regexp.MustCompile(`-$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot end with a hyphen", k))
-	}
-	if len(value) > 255 {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be greater than 255 characters", k))
-	}
-	return
-}
+var validOptionGroupName = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumeric characters and hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "must not end with a hyphen"),
+	validation.StringLenBetween(1, 255),
+)
 
-func validOptionGroupNamePrefix(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of %q must be a letter", k))
-	}
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only alphanumeric characters and hyphens allowed in %q", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot contain two consecutive hyphens", k))
-	}
-	if len(value) > 229 {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be greater than 229 characters", k))
-	}
-	return
-}
+var validOptionGroupNamePrefix = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumeric characters and hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+	validation.StringLenBetween(1, 229),
+)
 
-func validParamGroupName(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters and hyphens allowed in parameter group %q", k))
-	}
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of parameter group %q must be a letter", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"parameter group %q cannot contain two consecutive hyphens", k))
-	}
-	if regexp.MustCompile(`-$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"parameter group %q cannot end with a hyphen", k))
-	}
-	if len(value) > 255 {
-		errors = append(errors, fmt.Errorf(
-			"parameter group %q cannot be greater than 255 characters", k))
-	}
-	return
-}
+var validParamGroupName = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumeric characters and hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "must not end with a hyphen"),
+	validation.StringLenBetween(1, 255),
+)
 
-func validParamGroupNamePrefix(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters and hyphens allowed in parameter group %q", k))
-	}
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of parameter group %q must be a letter", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"parameter group %q cannot contain two consecutive hyphens", k))
-	}
-	if len(value) > 255 {
-		errors = append(errors, fmt.Errorf(
-			"parameter group %q cannot be greater than 226 characters", k))
-	}
-	return
-}
+var validParamGroupNamePrefix = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumeric characters and hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+	validation.StringLenBetween(1, 255),
+)
 
-func validSubnetGroupName(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[ .0-9a-z-_]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters, hyphens, underscores, periods, and spaces allowed in %q", k))
-	}
-	if len(value) > 255 {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be longer than 255 characters", k))
-	}
-	if regexp.MustCompile(`(?i)^default$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q is not allowed as %q", "Default", k))
-	}
-	return
-}
+var validSubnetGroupName = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[ .0-9a-z-_]+$`), "must only contain lowercase alphanumeric characters, hyphens, underscores, periods, and spaces"),
+	validation.StringLenBetween(1, 255),
+	validation.StringMatch(regexp.MustCompile(`(?i)^default$`), "is not allowed as Default"),
+)
 
-func validSubnetGroupNamePrefix(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[ .0-9a-z-_]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters, hyphens, underscores, periods, and spaces allowed in %q", k))
-	}
-	if len(value) > 229 {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot be longer than 229 characters", k))
-	}
-	return
-}
+var validSubnetGroupNamePrefix = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[ .0-9a-z-_]+$`), "must contain only lowercase alphanumeric characters, hyphens, underscores, periods, and spaces"),
+	validation.StringLenBetween(1, 229),
+)
 
-func validEngine() schema.SchemaValidateFunc {
-	return validation.StringInSlice([]string{
-		"aurora",
-		"aurora-mysql",
-		"aurora-postgresql",
-	}, false)
-}
+var validEngine = validation.StringInSlice([]string{
+	"aurora",
+	"aurora-mysql",
+	"aurora-postgresql",
+}, false)
 
-func validIdentifier(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters and hyphens allowed in %q", k))
-	}
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of %q must be a letter", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot contain two consecutive hyphens", k))
-	}
-	if regexp.MustCompile(`-$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot end with a hyphen", k))
-	}
-	return
-}
+var validIdentifier = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumeric characters and hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "must not end with a hyphen"),
+)
 
-func validIdentifierPrefix(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if !regexp.MustCompile(`^[0-9a-z-]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only lowercase alphanumeric characters and hyphens allowed in %q", k))
-	}
-	if !regexp.MustCompile(`^[a-z]`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"first character of %q must be a letter", k))
-	}
-	if regexp.MustCompile(`--`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"%q cannot contain two consecutive hyphens", k))
-	}
-	return
-}
+var validIdentifierPrefix = validation.All(
+	validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must only contain lowercase alphanumetic characters and hyphens"),
+	validation.StringMatch(regexp.MustCompile(`^[a-z]`), "must have a first character which is a letter"),
+	validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+)

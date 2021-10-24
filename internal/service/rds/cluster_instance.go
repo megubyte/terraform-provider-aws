@@ -101,7 +101,7 @@ func ResourceClusterInstance() *schema.Resource {
 				Optional:     true,
 				ForceNew:     true,
 				Default:      "aurora",
-				ValidateFunc: validEngine(),
+				ValidateFunc: validEngine,
 			},
 
 			"engine_version": {
