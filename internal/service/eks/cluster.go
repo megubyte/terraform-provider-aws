@@ -161,7 +161,7 @@ func ResourceCluster() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"platform_version": {
 				Type:     schema.TypeString,

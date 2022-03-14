@@ -45,7 +45,7 @@ func ResourceFargateProfile() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"fargate_profile_name": {
 				Type:         schema.TypeString,

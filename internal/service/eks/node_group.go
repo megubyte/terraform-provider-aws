@@ -62,7 +62,7 @@ func ResourceNodeGroup() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"disk_size": {
 				Type:     schema.TypeInt,

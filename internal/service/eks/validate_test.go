@@ -50,7 +50,7 @@ func TestValidClusterName(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		_, errors := validClusterName(tc.Value, "cluster_name")
+		_, errors := validClusterName()(tc.Value, "cluster_name")
 
 		if len(errors) != tc.ErrCount {
 			t.Fatalf("Expected the EKS Cluster Name to trigger a validation error: %s, expected %d, got %d errors", tc.Value, tc.ErrCount, len(errors))

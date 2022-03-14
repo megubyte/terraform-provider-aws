@@ -58,7 +58,7 @@ func ResourceAddon() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"created_at": {
 				Type:     schema.TypeString,

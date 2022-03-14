@@ -33,7 +33,7 @@ func DataSourceAddon() *schema.Resource {
 			"cluster_name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"created_at": {
 				Type:     schema.TypeString,

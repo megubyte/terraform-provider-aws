@@ -83,7 +83,7 @@ func DataSourceCluster() *schema.Resource {
 			"name": {
 				Type:         schema.TypeString,
 				Required:     true,
-				ValidateFunc: validClusterName,
+				ValidateFunc: validClusterName(),
 			},
 			"platform_version": {
 				Type:     schema.TypeString,
