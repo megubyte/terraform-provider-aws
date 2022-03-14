@@ -10,6 +10,7 @@ import (
 	multierror "github.com/hashicorp/go-multierror"
 	gversion "github.com/hashicorp/go-version"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 const (
@@ -29,14 +30,8 @@ var (
 	redisVersionPostV6Regexp = regexp.MustCompile(redisVersionPostV6RegexpPattern)
 )
 
-func ValidateElastiCacheRedisVersionString(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-
-	if !redisVersionRegexp.MatchString(value) {
-		errors = append(errors, fmt.Errorf("%s: Redis versions must match <major>.x when using version 6 or higher, or <major>.<minor>.<bug-fix>", k))
-	}
-
-	return
+func ValidateElastiCacheRedisVersionString() schema.SchemaValidateFunc {
+	return validation.StringMatch(redisVersionRegexp, "must match redis version <major>.x when using version 6 or higher, or <major>.<minor>.<bug fix>")
 }
 
 // NormalizeElastiCacheEngineVersion returns a github.com/hashicorp/go-version Version
@@ -95,9 +90,9 @@ func CustomizeDiffValidateClusterEngineVersion(_ context.Context, diff *schema.R
 
 	var validator schema.SchemaValidateFunc
 	if v, ok := diff.GetOk("engine"); !ok || v.(string) == engineMemcached {
-		validator = validVersionString
+		validator = validVersionString()
 	} else {
-		validator = ValidateElastiCacheRedisVersionString
+		validator = ValidateElastiCacheRedisVersionString()
 	}
 
 	_, errs := validator(engineVersion, "engine_version")

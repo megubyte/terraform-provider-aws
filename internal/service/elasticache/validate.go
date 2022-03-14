@@ -1,8 +1,10 @@
 package elasticache
 
 import (
-	"fmt"
 	"regexp"
+
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
 const (
@@ -12,25 +14,13 @@ const (
 
 var versionStringRegexp = regexp.MustCompile(versionStringRegexpPattern)
 
-func validReplicationGroupAuthToken(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-	if (len(value) < 16) || (len(value) > 128) {
-		errors = append(errors, fmt.Errorf(
-			"%q must contain from 16 to 128 alphanumeric characters or symbols (excluding @, \", and /)", k))
-	}
-	if !regexp.MustCompile(`^[^@"\/]+$`).MatchString(value) {
-		errors = append(errors, fmt.Errorf(
-			"only alphanumeric characters or symbols (excluding @, \", and /) allowed in %q", k))
-	}
-	return
+func validReplicationGroupAuthToken() schema.SchemaValidateFunc {
+	return validation.All(
+		validation.StringLenBetween(16, 128),
+		validation.StringMatch(regexp.MustCompile(`^[^@"\/]+$`), "must only contain alphanumeric characters or symbols (excl. @, \" and /)"),
+	)
 }
 
-func validVersionString(v interface{}, k string) (ws []string, errors []error) {
-	value := v.(string)
-
-	if !versionStringRegexp.MatchString(value) {
-		errors = append(errors, fmt.Errorf("%s: must be a version string matching x.y.z", k))
-	}
-
-	return
+func validVersionString() schema.SchemaValidateFunc {
+	return validation.StringMatch(versionStringRegexp, "must be a version string matching x.y.z")
 }

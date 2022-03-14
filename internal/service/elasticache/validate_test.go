@@ -38,7 +38,7 @@ func TestValidReplicationGroupAuthToken(t *testing.T) {
 	}
 
 	for _, tc := range cases {
-		_, errors := validReplicationGroupAuthToken(tc.Value, "aws_elasticache_replication_group_auth_token")
+		_, errors := validReplicationGroupAuthToken()(tc.Value, "aws_elasticache_replication_group_auth_token")
 
 		if len(errors) != tc.ErrCount {
 			t.Fatalf("Expected the ElastiCache Replication Group AuthToken to trigger a validation error")

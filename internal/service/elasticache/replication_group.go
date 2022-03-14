@@ -55,7 +55,7 @@ func ResourceReplicationGroup() *schema.Resource {
 				Type:          schema.TypeString,
 				Optional:      true,
 				Sensitive:     true,
-				ValidateFunc:  validReplicationGroupAuthToken,
+				ValidateFunc:  validReplicationGroupAuthToken(),
 				ConflictsWith: []string{"user_group_ids"},
 			},
 			"auto_minor_version_upgrade": {
@@ -134,7 +134,7 @@ func ResourceReplicationGroup() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				ValidateFunc: ValidateElastiCacheRedisVersionString,
+				ValidateFunc: ValidateElastiCacheRedisVersionString(),
 			},
 			"engine_version_actual": {
 				Type:     schema.TypeString,
