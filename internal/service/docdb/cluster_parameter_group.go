@@ -41,7 +41,7 @@ func ResourceClusterParameterGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name_prefix"},
-				ValidateFunc:  validParamGroupName,
+				ValidateFunc:  validParamGroupName(),
 			},
 			"name_prefix": {
 				Type:          schema.TypeString,
@@ -49,7 +49,7 @@ func ResourceClusterParameterGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name"},
-				ValidateFunc:  validParamGroupNamePrefix,
+				ValidateFunc:  validParamGroupNamePrefix(),
 			},
 			"family": {
 				Type:     schema.TypeString,

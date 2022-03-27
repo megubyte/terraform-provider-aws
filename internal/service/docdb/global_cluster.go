@@ -67,7 +67,7 @@ func ResourceGlobalCluster() *schema.Resource {
 				Type:         schema.TypeString,
 				Required:     true,
 				ForceNew:     true,
-				ValidateFunc: validGlobalCusterIdentifier,
+				ValidateFunc: validGlobalCusterIdentifier(),
 			},
 			"global_cluster_members": {
 				Type:     schema.TypeSet,

@@ -107,7 +107,7 @@ func ResourceClusterInstance() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"identifier_prefix"},
-				ValidateFunc:  validIdentifier,
+				ValidateFunc:  validIdentifier(),
 			},
 
 			"identifier_prefix": {
@@ -115,7 +115,7 @@ func ResourceClusterInstance() *schema.Resource {
 				Optional:     true,
 				Computed:     true,
 				ForceNew:     true,
-				ValidateFunc: validIdentifierPrefix,
+				ValidateFunc: validIdentifierPrefix(),
 			},
 
 			"instance_class": {

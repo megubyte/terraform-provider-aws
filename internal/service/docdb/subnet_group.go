@@ -39,7 +39,7 @@ func ResourceSubnetGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name_prefix"},
-				ValidateFunc:  validSubnetGroupName,
+				ValidateFunc:  validSubnetGroupName(),
 			},
 			"name_prefix": {
 				Type:          schema.TypeString,
@@ -47,7 +47,7 @@ func ResourceSubnetGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name"},
-				ValidateFunc:  validSubnetGroupNamePrefix,
+				ValidateFunc:  validSubnetGroupNamePrefix(),
 			},
 
 			"description": {

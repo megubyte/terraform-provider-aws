@@ -30,13 +30,13 @@ func ResourceClusterSnapshot() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"db_cluster_snapshot_identifier": {
 				Type:         schema.TypeString,
-				ValidateFunc: validClusterSnapshotIdentifier,
+				ValidateFunc: validClusterSnapshotIdentifier(),
 				Required:     true,
 				ForceNew:     true,
 			},
 			"db_cluster_identifier": {
 				Type:         schema.TypeString,
-				ValidateFunc: validClusterIdentifier,
+				ValidateFunc: validClusterIdentifier(),
 				Required:     true,
 				ForceNew:     true,
 			},

@@ -60,7 +60,7 @@ func ResourceCluster() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"cluster_identifier_prefix"},
-				ValidateFunc:  validIdentifier,
+				ValidateFunc:  validIdentifier(),
 			},
 			"cluster_identifier_prefix": {
 				Type:          schema.TypeString,
@@ -68,7 +68,7 @@ func ResourceCluster() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"cluster_identifier"},
-				ValidateFunc:  validIdentifierPrefix,
+				ValidateFunc:  validIdentifierPrefix(),
 			},
 
 			"cluster_members": {
@@ -100,7 +100,7 @@ func ResourceCluster() *schema.Resource {
 			"global_cluster_identifier": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				ValidateFunc: validGlobalCusterIdentifier,
+				ValidateFunc: validGlobalCusterIdentifier(),
 			},
 
 			"reader_endpoint": {
@@ -136,20 +136,11 @@ func ResourceCluster() *schema.Resource {
 			"final_snapshot_identifier": {
 				Type:     schema.TypeString,
 				Optional: true,
-				ValidateFunc: func(v interface{}, k string) (ws []string, es []error) {
-					value := v.(string)
-					if !regexp.MustCompile(`^[0-9A-Za-z-]+$`).MatchString(value) {
-						es = append(es, fmt.Errorf(
-							"only alphanumeric characters and hyphens allowed in %q", k))
-					}
-					if regexp.MustCompile(`--`).MatchString(value) {
-						es = append(es, fmt.Errorf("%q cannot contain two consecutive hyphens", k))
-					}
-					if regexp.MustCompile(`-$`).MatchString(value) {
-						es = append(es, fmt.Errorf("%q cannot end in a hyphen", k))
-					}
-					return
-				},
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile(`^[0-9A-Za-z-]+$`), "must contain only alphanumeric characters or hyphens"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "must not end in a hyphen"),
+				),
 			},
 
 			"skip_final_snapshot": {

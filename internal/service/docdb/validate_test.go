@@ -13,7 +13,7 @@ func TestValidIdentifier(t *testing.T) {
 		strings.Repeat("w", 63),
 	}
 	for _, v := range validNames {
-		_, errors := validIdentifier(v, "name")
+		_, errors := validIdentifier()(v, "name")
 		if len(errors) != 0 {
 			t.Fatalf("%q should be a valid DocDB Identifier: %q", v, errors)
 		}
@@ -31,7 +31,7 @@ func TestValidIdentifier(t *testing.T) {
 		strings.Repeat("W", 64),
 	}
 	for _, v := range invalidNames {
-		_, errors := validIdentifier(v, "name")
+		_, errors := validIdentifier()(v, "name")
 		if len(errors) == 0 {
 			t.Fatalf("%q should be an invalid DocDB Identifier", v)
 		}
