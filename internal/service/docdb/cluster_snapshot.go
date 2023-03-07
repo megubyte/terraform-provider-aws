@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-aws/internal/conns"
 	"github.com/hashicorp/terraform-provider-aws/internal/errs/sdkdiag"
 	"github.com/hashicorp/terraform-provider-aws/internal/flex"
@@ -33,16 +35,26 @@ func ResourceClusterSnapshot() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			"db_cluster_snapshot_identifier": {
-				Type:         schema.TypeString,
-				ValidateFunc: validClusterSnapshotIdentifier,
-				Required:     true,
-				ForceNew:     true,
+				Type: schema.TypeString,
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "last character must not be a hyphen"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
+				Required: true,
+				ForceNew: true,
 			},
 			"db_cluster_identifier": {
-				Type:         schema.TypeString,
-				ValidateFunc: validClusterIdentifier,
-				Required:     true,
-				ForceNew:     true,
+				Type: schema.TypeString,
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "last character must not be a hyphen"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
+				Required: true,
+				ForceNew: true,
 			},
 
 			"availability_zones": {

@@ -61,7 +61,13 @@ func ResourceCluster() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"cluster_identifier_prefix"},
-				ValidateFunc:  validIdentifier,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 63),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "last character must not be a hyphen"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 			"cluster_identifier_prefix": {
 				Type:          schema.TypeString,
@@ -69,7 +75,11 @@ func ResourceCluster() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"cluster_identifier"},
-				ValidateFunc:  validIdentifierPrefix,
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 
 			"cluster_members": {
@@ -99,9 +109,14 @@ func ResourceCluster() *schema.Resource {
 			},
 
 			"global_cluster_identifier": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				ValidateFunc: validGlobalCusterIdentifier,
+				Type:     schema.TypeString,
+				Optional: true,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 255),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[A-Za-z]`), "first character must be a letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 
 			"reader_endpoint": {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -44,7 +45,13 @@ func ResourceClusterParameterGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name_prefix"},
-				ValidateFunc:  validParamGroupName,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 255),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "last character must not be a hyphen"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 			"name_prefix": {
 				Type:          schema.TypeString,
@@ -52,7 +59,12 @@ func ResourceClusterParameterGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name"},
-				ValidateFunc:  validParamGroupNamePrefix,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 255),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 			"family": {
 				Type:     schema.TypeString,

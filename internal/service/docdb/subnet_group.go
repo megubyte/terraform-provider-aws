@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"regexp"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -12,6 +13,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/resource"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 	"github.com/hashicorp/terraform-provider-aws/internal/conns"
 	"github.com/hashicorp/terraform-provider-aws/internal/errs/sdkdiag"
 	"github.com/hashicorp/terraform-provider-aws/internal/flex"
@@ -43,7 +45,11 @@ func ResourceSubnetGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name_prefix"},
-				ValidateFunc:  validSubnetGroupName,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 255),
+					validation.StringNotInSlice([]string{"default"}, false),
+					validation.StringMatch(regexp.MustCompile(`^[ .0-9a-z-_]+$`), "must contain only alphanumeric characters, hyphens, periods, spaces and underscores"),
+				),
 			},
 			"name_prefix": {
 				Type:          schema.TypeString,
@@ -51,7 +57,10 @@ func ResourceSubnetGroup() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"name"},
-				ValidateFunc:  validSubnetGroupNamePrefix,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 255-resource.UniqueIDSuffixLength),
+					validation.StringMatch(regexp.MustCompile(`^[ .0-9a-z-_]+$`), "must contain only alphanumeric characters, hyphens, periods, spaces and underscores"),
+				),
 			},
 
 			"description": {

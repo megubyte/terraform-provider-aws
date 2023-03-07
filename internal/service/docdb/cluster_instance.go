@@ -3,6 +3,7 @@ package docdb
 import (
 	"context"
 	"log"
+	"regexp"
 	"strings"
 	"time"
 
@@ -104,14 +105,24 @@ func ResourceClusterInstance() *schema.Resource {
 				Computed:      true,
 				ForceNew:      true,
 				ConflictsWith: []string{"identifier_prefix"},
-				ValidateFunc:  validIdentifier,
+				ValidateFunc: validation.All(
+					validation.StringLenBetween(1, 63),
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`-$`), "last character must not be a hyphen"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 			"identifier_prefix": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				ForceNew:     true,
-				ValidateFunc: validIdentifierPrefix,
+				Type:     schema.TypeString,
+				Optional: true,
+				Computed: true,
+				ForceNew: true,
+				ValidateFunc: validation.All(
+					validation.StringMatch(regexp.MustCompile(`^[0-9a-z-]+$`), "must contain only alphanumeric characters and hyphens"),
+					validation.StringMatch(regexp.MustCompile(`^[a-z]`), "first character must be a lowercase letter"),
+					validation.StringDoesNotMatch(regexp.MustCompile(`--`), "must not contain two consecutive hyphens"),
+				),
 			},
 			"instance_class": {
 				Type:     schema.TypeString,
